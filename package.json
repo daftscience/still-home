@@ -1,0 +1,14 @@
+{
+  "name": "still-home",
+  "version": "0.5.6",
+  "private": true,
+  "description": "Minimalist homescreen and local phone companion for rooted LG webOS TVs",
+  "scripts": {
+    "test": "node --test tests/*.test.js tests/*.test.cjs",
+    "build": "ares-package app service --no-minify --outdir dist",
+    "feed": "node scripts/build-feed.cjs",
+    "preview": "STILL_HOME_DEMO=1 STILL_HOME_STATE=./state node service/service.js"
+  },
+  "engines": {"node": ">=18"},
+  "devDependencies": {"@webosose/ares-cli": "2.4.0", "jsqr": "1.4.0"}
+}

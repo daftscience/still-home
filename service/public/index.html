@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f3ed">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Still Home">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Still Home · TV companion</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/image-info.js" defer></script>
+  <script src="/image-prepare.js" defer></script>
+  <script src="/focal-math.js" defer></script>
+  <script src="/media-actions.js" defer></script>
+  <script src="/phone.js" defer></script>
+  <script src="/companion-layout.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="Still Home companion"><span class="brand-mark" aria-hidden="true">◒</span> Still Home</a>
+      <span class="eyebrow">TV companion</span>
+    </header>
+
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <section id="pair-view" class="pair-view" aria-labelledby="pair-title">
+      <p class="eyebrow accent">A little more you.</p>
+      <h1 id="pair-title">Make yourself<br>at home.</h1>
+      <p class="intro">Your photos. Your favorite apps. A quieter space on your TV.</p>
+      <button id="reconnect-button" class="button secondary wide" type="button" hidden>Try reconnecting</button>
+      <form id="pair-form" class="card pair-card">
+        <h2>Connect to your TV</h2>
+        <p>Choose <strong>Settings → Pairing → Show pairing QR code</strong> on your TV, then scan it or enter its six-digit code here.</p>
+        <label for="pair-code">Pairing code</label>
+        <input id="pair-code" name="code" class="code-input" type="text" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="one-time-code" placeholder="000000" required aria-describedby="pair-help">
+        <label class="remember-option" for="remember-phone"><input id="remember-phone" type="checkbox" checked aria-describedby="pair-help"><span>Remember this phone</span></label>
+        <button id="pair-button" class="button primary wide" type="submit">Connect to TV <span aria-hidden="true">↗</span></button>
+        <p id="pair-help" class="fine-print">Use only on your trusted home Wi-Fi and a phone you trust. Remembering lets this phone reconnect for up to a year after use. Uncheck for a 30-minute connection in this tab.</p>
+      </form>
+      <p class="quiet-note">A companion for Still Home. No account needed.</p>
+    </section>
+
+    <div id="settings-view" hidden>
+      <section class="page-heading" aria-labelledby="settings-title">
+        <div class="connection"><span class="status-dot" aria-hidden="true"></span><span id="connection-label">Connected to your TV</span></div>
+        <h1 id="settings-title">Your home,<br>your way.</h1>
+        <p class="intro">Changes appear in Still Home on your TV.</p>
+        <div class="heading-actions"><button id="refresh-button" class="text-button" type="button">Refresh settings</button><button id="disconnect-button" class="text-button muted" type="button">Disconnect tab</button></div>
+      </section>
+
+      <section id="home-screen-card" class="card home-screen-card" aria-labelledby="home-screen-title">
+        <button id="home-screen-dismiss" class="icon-button banner-dismiss" type="button" aria-label="Dismiss Home Screen banner">×</button><div class="home-screen-heading"><img src="/icon.svg" width="44" height="44" alt=""><h2 id="home-screen-title">Keep Still Home close</h2></div>
+        <p id="session-note">This tab is connected for 30 minutes.</p>
+        <button id="remember-button" class="button secondary wide" type="button">Remember this phone</button>
+        <details id="install-help">
+          <summary>Add to Home Screen</summary>
+          <p id="install-intro" class="fine-print">Add a Still Home icon to open this companion from your phone.</p>
+          <div id="install-iphone"><h3>iPhone or iPad</h3><p class="fine-print">Open this page in Safari. Tap Share → Add to Home Screen, turn on Open as Web App if shown, then tap Add.</p></div>
+          <div id="install-android"><h3>Android</h3><p class="fine-print">Open this page in Chrome. Tap the ⋮ menu → Add to Home screen, then follow the prompts. It may instead say Install and create shortcut → Create shortcut.</p></div>
+          <button id="install-button" class="button secondary wide" type="button" hidden>Add Still Home</button>
+          <p id="install-pairing-note" class="fine-print">Remember this phone before adding the icon. On iOS 17.2 or later, Safari can carry the connection into the new Home Screen app. If it asks to pair once, use a fresh code from your TV.</p>
+          <p class="fine-print">No app store needed. Keep your TV on with Still Home running and use the same trusted home Wi-Fi. This local HTTP page needs a live TV connection; full app installation may not be offered. If your TV’s address changes, open its new pairing link and add the icon again.</p>
+        </details>
+        <button id="forget-button" class="text-button muted" type="button" hidden>Forget this phone</button>
+      </section>
+
+      <details id="section-wallpaper" class="card collapsible-card" open><summary class="section-heading"><span class="section-number">01</span><h2 id="wallpaper-title">Set the scene</h2><span class="section-chevron" aria-hidden="true">⌄</span></summary><div class="section-body">
+        <p>Bring a favorite photo or a quiet, looping video to your screen.</p>
+        <div class="wallpaper-current"><span class="wallpaper-symbol" aria-hidden="true">▧</span><div><span class="field-caption">Current wallpaper</span><strong id="wallpaper-name">Default landscape</strong><span id="wallpaper-detail" class="fine-print">Still Home wallpaper</span></div></div>
+        <button id="current-focal-button" class="button secondary wide" type="button">Preview &amp; set focal point</button>
+        <div class="wallpaper-library-heading"><h3>Saved wallpapers</h3><span id="wallpaper-library-count" class="pill">1 wallpaper</span></div>
+        <p class="library-helper fine-print">Switch between saved photos and videos. Uploads stay here, and each photo remembers its own focal point.</p>
+        <ul id="wallpaper-library" class="wallpaper-library" aria-label="Saved wallpapers"></ul>
+        <label class="file-picker" for="wallpaper-file"><span class="upload-symbol" aria-hidden="true">↑</span><strong>Choose a photo or video</strong><span>JPG, PNG, WebP or MP4 · up to 150 MB</span></label>
+        <input id="wallpaper-file" class="file-input" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,.jpg,.jpeg,.png,.webp,.mp4" aria-describedby="video-note">
+        <div id="selected-file" class="selected-file" hidden><div><strong id="selected-file-name"></strong><span id="selected-file-size" class="fine-print"></span></div><button id="clear-file-button" class="text-button" type="button">Clear</button></div>
+        <div id="upload-status" class="upload-status" aria-live="polite" hidden><div class="progress-label"><span id="upload-label">Uploading…</span><span id="upload-percent">0%</span></div><progress id="upload-progress" max="100" value="0">0%</progress><button id="cancel-upload-button" class="text-button" type="button">Cancel upload</button></div>
+        <button id="upload-button" class="button primary wide" type="button" disabled>Upload &amp; set wallpaper</button>
+        <p id="video-note" class="fine-print">Photos are resized as a separate TV copy, keeping the full photo and leaving your original untouched. Photos up to 64 megapixels are supported. MP4 videos upload unchanged and play silently on repeat; use MP4 for animated wallpapers. Keep this tab open during preparation and upload.</p>
+        <div class="setting-group">
+          <label class="range-label" for="wallpaper-dim"><span>Wallpaper dimming</span><output id="dim-value" for="wallpaper-dim">32%</output></label>
+          <input id="wallpaper-dim" type="range" min="0" max="75" step="1" value="32">
+          <div class="range-ends"><span>Brighter</span><span>Darker</span></div>
+        </div>
+        <div class="motion-setting"><label class="motion-toggle" for="ken-burns"><span>Slow pan &amp; zoom</span><input id="ken-burns" type="checkbox" aria-describedby="ken-burns-help"></label><label for="ken-burns-speed">Motion speed <output id="ken-burns-speed-value">100%</output></label><input id="ken-burns-speed" type="range" min="25" max="300" step="5" value="100" aria-describedby="ken-burns-speed-help"><p id="ken-burns-speed-help" class="fine-print">25% is slowest · 100% is normal · 300% is fastest. Photos only.</p><p id="ken-burns-help" class="fine-print">A gentle Ken Burns effect for photo wallpapers. Videos keep their own motion.</p></div>
+        <button id="reset-wallpaper-button" class="text-button" type="button">Use default wallpaper</button>
+      </div></details>
+
+      <details id="section-weather" class="card collapsible-card" open><summary class="section-heading"><span class="section-number">02</span><h2 id="weather-title">Time &amp; place</h2><span class="section-chevron" aria-hidden="true">⌄</span></summary><div class="section-body">
+        <p id="current-location" class="current-location">Choose a location to show the weather.</p>
+        <form id="location-form">
+          <label for="location-query">Weather location</label>
+          <div class="search-row"><input id="location-query" type="search" placeholder="City or postal code" minlength="2" maxlength="100" autocomplete="address-level2" required><button id="location-search-button" class="button secondary" type="submit">Search</button></div>
+        </form>
+        <p id="location-status" class="fine-print" role="status" hidden></p>
+        <ul id="location-results" class="location-results" aria-label="Location search results" hidden></ul>
+        <button id="clear-location-button" class="text-button" type="button" hidden>Hide weather</button>
+        <div class="setting-row"><label for="temperature-unit">Temperature</label><select id="temperature-unit"><option value="fahrenheit">Fahrenheit · °F</option><option value="celsius">Celsius · °C</option></select></div>
+        <div class="setting-row"><label for="clock-format">Clock</label><select id="clock-format"><option value="12">12-hour</option><option value="24">24-hour</option></select></div>
+        <p class="fine-print">Time follows your TV’s clock. Weather by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>.</p>
+      </div></details>
+
+      <details id="section-appearance" class="card appearance-card collapsible-card" open><summary class="section-heading"><span class="section-number">03</span><h2 id="appearance-title">Make it easy to read</h2><span class="section-chevron" aria-hidden="true">⌄</span></summary><div class="section-body">
+        <p>Size each detail to suit your screen. 100% is the original size.</p>
+        <div class="appearance-setting">
+          <label class="range-label" for="clock-scale"><span>Clock size</span><output id="clock-scale-value" for="clock-scale">100%</output></label>
+          <input id="clock-scale" type="range" min="70" max="150" step="5" value="100">
+          <div class="range-ends"><span>70% · Smaller</span><span>Larger · 150%</span></div>
+        </div>
+        <div class="appearance-setting">
+          <label class="range-label" for="date-scale"><span>Date size</span><output id="date-scale-value" for="date-scale">100%</output></label>
+          <input id="date-scale" type="range" min="70" max="150" step="5" value="100">
+          <div class="range-ends"><span>70% · Smaller</span><span>Larger · 150%</span></div>
+        </div>
+        <div class="appearance-setting">
+          <label class="range-label" for="weather-scale"><span>Weather size</span><output id="weather-scale-value" for="weather-scale">100%</output></label>
+          <input id="weather-scale" type="range" min="70" max="150" step="5" value="100">
+          <div class="range-ends"><span>70% · Smaller</span><span>Larger · 150%</span></div>
+        </div>
+        <div class="appearance-setting">
+          <label class="range-label" for="text-shade"><span>Text shadow</span><output id="text-shade-value" for="text-shade">0%</output></label>
+          <input id="text-shade" type="range" min="0" max="80" step="5" value="0" aria-describedby="text-shade-help">
+          <div class="range-ends"><span>Off</span><span>Stronger · 80%</span></div>
+          <p id="text-shade-help" class="fine-print">A subtle shadow follows the clock, date and weather letters on your TV. Wallpaper dimming stays as you set it.</p>
+        </div>
+      </div></details>
+
+      <details id="section-apps" class="card apps-card collapsible-card" open><summary class="section-heading"><span class="section-number">04</span><h2 id="apps-title">Keep your favorites</h2><span class="section-chevron" aria-hidden="true">⌄</span></summary><div class="section-body">
+        <p>Choose the apps you see on Home, then put them in your order.</p>
+        <div class="list-heading"><h3>On your Home</h3><span id="selected-count" class="pill">0 apps</span></div>
+        <p id="selected-apps-empty" class="empty-note" hidden>No apps selected. Add some below, or leave your Home clear.</p>
+        <ol id="selected-apps" class="selected-apps" aria-label="Selected apps in display order"></ol>
+        <div class="list-heading available-heading"><h3>Available apps</h3><button id="default-apps-button" class="text-button" type="button">Use defaults</button></div>
+        <p id="available-apps-empty" class="empty-note" hidden>No apps were returned by the TV. Refresh settings to try again.</p>
+        <div id="available-apps" class="available-apps"></div>
+        <div class="apps-save-row"><p id="apps-save-note" class="fine-print">Your app selection is saved.</p><button id="save-apps-button" class="button primary" type="button" disabled>Save apps</button></div>
+      </div></details>
+
+      <details id="section-general" class="card collapsible-card" open><summary class="section-heading"><span class="section-number">05</span><h2>General</h2><span class="section-chevron" aria-hidden="true">⌄</span></summary><div class="section-body"><label class="motion-toggle" for="launch-at-start"><span>Launch at start</span><input id="launch-at-start" type="checkbox"></label><p class="fine-print">Open Still Home shortly after your TV turns on or wakes from standby. Leaves your Home button unchanged. Requires the Still Home Homebrew startup hook; Reset turns this off.</p></div></details><footer class="footer"><button id="home-screen-footer" class="button secondary home-screen-footer" type="button" aria-controls="home-screen-card" aria-expanded="true">◒ Home Screen help</button><span class="brand-mark" aria-hidden="true">◒</span><p>Less noise. More home.</p><span class="fine-print">Still Home · 0.5.6</span></footer>
+    </div>
+  </main>
+  <div id="focal-dialog" class="focal-dialog" role="dialog" aria-modal="true" aria-labelledby="focal-title" hidden>
+    <section class="focal-panel">
+      <header class="focal-header"><div><p class="eyebrow">PHOTO FRAMING</p><h2 id="focal-title">Set focal point</h2><p id="focal-photo-name" class="fine-print"></p></div><button id="focal-close-button" class="icon-button" type="button" aria-label="Cancel and close focal editor">×</button></header>
+      <div class="focal-content">
+        <p class="focal-intro">Tap or drag to the part of the photo you want to keep steady. The white frame shows what fits on your TV.</p>
+        <p id="focal-notice" class="focal-notice" role="status" aria-live="polite">Loading photo…</p>
+        <div id="focal-surface" class="focal-surface"><img id="focal-image" alt="Full photo for choosing the focal point" draggable="false"><div id="focal-crop-outline" class="focal-crop-outline" aria-hidden="true" hidden></div><div id="focal-crosshair" class="focal-crosshair" aria-hidden="true" hidden></div></div>
+        <div class="focal-range"><label class="range-label" for="focal-x"><span>Horizontal position</span><output id="focal-x-value" for="focal-x">50.0%</output></label><input id="focal-x" type="range" min="0" max="1000" step="1" value="500"><div class="range-ends"><span>Left</span><span>Right</span></div></div>
+        <div class="focal-range"><label class="range-label" for="focal-y"><span>Vertical position</span><output id="focal-y-value" for="focal-y">50.0%</output></label><input id="focal-y" type="range" min="0" max="1000" step="1" value="500"><div class="range-ends"><span>Top</span><span>Bottom</span></div></div>
+        <div class="focal-preview-heading"><h3>TV framing · 16:9</h3><span id="focal-anchor-status" class="fine-print">Original framing</span></div>
+        <canvas id="focal-preview" class="focal-preview" width="640" height="360" aria-label="Preview of the photo framing on the TV"></canvas>
+        <div class="focal-range"><label class="range-label" for="focal-zoom"><span>Preview zoom</span><output id="focal-zoom-value" for="focal-zoom">100%</output></label><input id="focal-zoom" type="range" min="100" max="112" step="1" value="100"></div>
+        <p class="fine-print">The subject stays centered when the photo allows it. Near an edge, it stays at the closest safe position without extreme cropping. Preview zoom does not change your motion setting.</p>
+        <button id="focal-reset-button" class="text-button" type="button">Use original framing</button>
+      </div>
+      <footer class="focal-footer"><button id="focal-cancel-button" class="button secondary" type="button">Cancel</button><button id="focal-save-button" class="button primary" type="button">Save focal point</button></footer>
+    </section>
+  </div>
+</body>
+</html>

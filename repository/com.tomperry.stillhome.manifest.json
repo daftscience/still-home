@@ -1,0 +1,14 @@
+{
+  "id": "com.tomperry.stillhome",
+  "version": "0.5.6",
+  "type": "web",
+  "title": "Still Home",
+  "appDescription": "Minimalist Home with clock, weather, apps and a local phone wallpaper companion. Root setup required; see README.",
+  "iconUri": "https://github.com/daftscience/still-home/releases/download/v0.5.6/icon.png",
+  "sourceUrl": "https://github.com/daftscience/still-home",
+  "rootRequired": true,
+  "ipkUrl": "https://github.com/daftscience/still-home/releases/download/v0.5.6/com.tomperry.stillhome_0.5.6_all.ipk",
+  "ipkHash": {
+    "sha256": "d2e410d5b1c7ac358b2810f5cb06e54976e12a6b9af2b0a2dda8ef0621ed84c2"
+  }
+}

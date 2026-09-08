@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Still Home</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="home" aria-label="Still Home">
+    <div class="wallpaper" aria-hidden="true">
+      <img id="wallpaper-image" src="wallpaper.jpg" alt="">
+      <video id="wallpaper-video" muted autoplay loop playsinline preload="metadata" hidden></video>
+      <div id="wallpaper-dim"></div>
+      <div class="wallpaper-shade"></div>
+    </div>
+
+    <header class="topbar">
+      <span class="wordmark"><span class="brand-mark" aria-hidden="true"></span>STILL HOME</span>
+      <button id="settings-open" class="quiet-button" data-focus data-focus-key="settings-open" aria-haspopup="dialog" aria-controls="settings-panel"><span class="gear" aria-hidden="true">⚙</span> Settings</button>
+    </header>
+
+    <section class="glance" aria-label="Time and weather">
+      <div class="time-block">
+        <div class="clock-line"><time id="clock">—:—</time><span id="clock-period"></span></div>
+        <p id="date"></p>
+      </div>
+      <button id="weather-open" class="weather" data-focus data-focus-key="weather-open" aria-label="Set weather location">
+        <span id="weather-symbol" class="weather-symbol" aria-hidden="true">◌</span>
+        <span class="weather-copy"><span id="weather-temperature" class="weather-temperature">Weather</span><span id="weather-description" class="weather-description">Choose your city</span><span id="weather-place" class="weather-place">Set up in Settings</span></span>
+      </button>
+    </section>
+
+    <section class="apps-section" aria-label="Your apps">
+      <div class="section-heading"><h1>Your apps</h1><span id="connection-state" role="status">Connecting…</span></div>
+      <div id="app-row" class="app-row"></div>
+      <div id="apps-empty" class="apps-empty" hidden><p>Your home, your essentials.</p><button id="choose-apps" class="quiet-button" data-focus data-focus-key="choose-apps">Choose apps</button></div>
+      <p class="remote-hint">Use the arrows to explore <span>·</span> OK to open</p>
+    </section>
+  </main>
+
+  <div id="settings-scrim" class="settings-scrim" hidden>
+    <section id="settings-panel" class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <header class="panel-header"><div><span class="eyebrow">MAKE YOURSELF AT HOME</span><h2 id="settings-title">Settings</h2></div><button id="settings-close" class="icon-button" data-focus data-focus-key="settings-close" aria-label="Close settings">×</button></header>
+      <nav class="tabs" aria-label="Settings sections">
+        <button class="tab active" data-focus data-focus-key="tab-apps" data-tab="apps" aria-pressed="true">Apps</button>
+        <button class="tab" data-focus data-focus-key="tab-wallpaper" data-tab="wallpaper" aria-pressed="false">Wallpaper</button>
+        <button class="tab" data-focus data-focus-key="tab-display" data-tab="display" aria-pressed="false">Time & weather</button>
+        <button class="tab" data-focus data-focus-key="tab-pairing" data-tab="pairing" aria-pressed="false">Pairing</button>
+        <button class="tab" data-focus data-focus-key="tab-general" data-tab="general" aria-pressed="false">General</button>
+      </nav>
+      <div id="settings-notice" class="notice" role="status" hidden></div>
+      <div class="panel-body">
+        <section id="section-apps" class="settings-section" aria-label="Apps settings">
+          <div class="section-intro"><h3>Just the essentials.</h3><p>Choose the apps on your home screen, then arrange them in your order.</p></div>
+          <div class="list-caption"><span>ON YOUR HOME SCREEN</span><span id="selected-count">0 apps</span></div>
+          <div id="selected-apps" class="selected-apps"></div>
+          <div id="app-conflict" class="conflict-box" hidden><p>Your settings changed on another device. Your choices are still here. Reload the saved list, or replace it with your choices.</p><div class="button-row"><button id="apps-reload" class="secondary-button" data-focus data-focus-key="apps-reload">Reload saved list</button><button id="apps-overwrite" class="secondary-button" data-focus data-focus-key="apps-overwrite">Use my choices</button></div></div>
+          <div class="apps-actions"><button id="apps-save" class="primary-button" data-focus data-focus-key="apps-save" disabled>Save app list</button><button id="apps-reset" class="secondary-button" data-focus data-focus-key="apps-reset" disabled>Undo changes</button></div>
+          <div class="list-caption all-apps-caption"><span>AVAILABLE APPS</span><button id="apps-refresh" class="text-button" data-focus data-focus-key="apps-refresh">Refresh</button></div>
+          <div id="available-apps" class="available-apps"></div>
+        </section>
+
+        <section id="section-wallpaper" class="settings-section" aria-label="Wallpaper settings" hidden>
+          <div class="section-intro"><h3>A little atmosphere.</h3><p>Add a photograph or a silent, looping MP4 from your phone.</p></div>
+          <div class="setting-card"><div class="setting-card-heading"><span class="eyebrow">CURRENT WALLPAPER</span><span id="wallpaper-type" class="pill">Photo</span></div><p id="wallpaper-name" class="wallpaper-name">Neutral · included wallpaper</p><p id="video-notice" class="helper warning" hidden></p><button id="wallpaper-reset" class="secondary-button" data-focus data-focus-key="wallpaper-reset">Use included photo</button></div>
+          <div class="setting-card"><div class="setting-card-heading"><h4>Your wallpaper library</h4><button id="library-refresh" class="text-button" data-focus data-focus-key="library-refresh">Refresh</button></div><p class="helper">Uploaded wallpapers stay here. Choose one, or set a photograph’s focal point.</p><div id="wallpaper-library" class="wallpaper-library"></div></div>
+          <p class="helper"><button id="connect-phone" class="text-button" data-focus data-focus-key="connect-phone">Connect a phone</button> to upload more wallpapers.</p>
+          <div class="setting-card"><div class="setting-card-heading"><h4>Wallpaper dimming</h4><output id="dim-value">32%</output></div><p class="helper">Keep your apps and clock easy to read.</p><div class="dim-controls"><button id="dim-less" class="icon-button" data-focus data-focus-key="dim-less" aria-label="Decrease wallpaper dimming">−</button><input id="dim-slider" data-focus data-focus-key="dim-slider" type="range" min="0" max="75" step="1" value="32" aria-label="Wallpaper dimming"><button id="dim-more" class="icon-button" data-focus data-focus-key="dim-more" aria-label="Increase wallpaper dimming">+</button></div></div>
+          <div class="setting-card"><div class="setting-inline"><div><h4>Gentle photo motion</h4><p class="helper">A slow Ken Burns zoom. Your chosen focal point stays fixed; original framing keeps the top anchored. Photos only.</p></div><button id="ken-burns-toggle" class="toggle" data-focus data-focus-key="ken-burns-toggle" role="switch" aria-checked="false" aria-describedby="ken-burns-status" aria-label="Gentle Ken Burns motion on photographs"><span></span></button></div><div class="setting-card-heading"><label for="ken-burns-speed">Motion speed</label><output id="ken-burns-speed-value">100%</output></div><div class="dim-controls"><button id="ken-burns-speed-less" class="icon-button" data-focus data-focus-key="ken-burns-speed-less" aria-label="Slower photo motion">−</button><input id="ken-burns-speed" data-focus data-focus-key="ken-burns-speed" type="range" min="0.25" max="3" step="0.05" value="1" aria-label="Ken Burns speed"><button id="ken-burns-speed-more" class="icon-button" data-focus data-focus-key="ken-burns-speed-more" aria-label="Faster photo motion">+</button></div><p class="helper">25% is slowest · 100% is normal · 300% is fastest. Photos only.</p><p id="ken-burns-status" class="helper motion-status" role="status">Off. Photographs stay still.</p><p class="fine-print">Pauses in Settings and while the app is hidden. Smaller photographs use less motion or stay still to keep them sharp.</p></div>
+        </section>
+
+        <section id="section-display" class="settings-section" aria-label="Time and weather settings" hidden>
+          <div class="section-intro"><h3>Here and now.</h3><p>Your local time, and a little look outside.</p></div>
+          <div class="setting-card"><h4>Text sizes</h4><p class="helper">Adjust each part of your home screen separately. Changes preview and save automatically.</p><div class="appearance-control"><div class="setting-card-heading"><label for="clock-scale">Clock</label><output id="clock-scale-value">100%</output></div><div class="dim-controls"><button id="clock-scale-less" class="icon-button" data-focus data-focus-key="clock-scale-less" aria-label="Make clock smaller">−</button><input id="clock-scale" data-focus data-focus-key="clock-scale" type="range" min="0.7" max="1.5" step="0.05" value="1" aria-label="Clock text size"><button id="clock-scale-more" class="icon-button" data-focus data-focus-key="clock-scale-more" aria-label="Make clock larger">+</button></div></div><div class="appearance-control"><div class="setting-card-heading"><label for="date-scale">Date</label><output id="date-scale-value">100%</output></div><div class="dim-controls"><button id="date-scale-less" class="icon-button" data-focus data-focus-key="date-scale-less" aria-label="Make date smaller">−</button><input id="date-scale" data-focus data-focus-key="date-scale" type="range" min="0.7" max="1.5" step="0.05" value="1" aria-label="Date text size"><button id="date-scale-more" class="icon-button" data-focus data-focus-key="date-scale-more" aria-label="Make date larger">+</button></div></div><div class="appearance-control"><div class="setting-card-heading"><label for="weather-scale">Weather</label><output id="weather-scale-value">100%</output></div><div class="dim-controls"><button id="weather-scale-less" class="icon-button" data-focus data-focus-key="weather-scale-less" aria-label="Make weather smaller">−</button><input id="weather-scale" data-focus data-focus-key="weather-scale" type="range" min="0.7" max="1.5" step="0.05" value="1" aria-label="Weather text size"><button id="weather-scale-more" class="icon-button" data-focus data-focus-key="weather-scale-more" aria-label="Make weather larger">+</button></div></div></div>
+          <div class="setting-card"><div class="setting-card-heading"><h4>Text shadow</h4><output id="text-shade-value">Off</output></div><p class="helper">A subtle shadow following the letters of the clock, date and weather. Your wallpaper’s overall brightness stays the same.</p><div class="dim-controls"><button id="text-shade-less" class="icon-button" data-focus data-focus-key="text-shade-less" aria-label="Decrease text shadow">−</button><input id="text-shade" data-focus data-focus-key="text-shade" type="range" min="0" max="0.8" step="0.05" value="0" aria-label="Shadow on clock, date and weather"><button id="text-shade-more" class="icon-button" data-focus data-focus-key="text-shade-more" aria-label="Increase text shadow">+</button></div><button id="appearance-reset" class="text-button" data-focus data-focus-key="appearance-reset">Reset text sizes and shadow</button></div>
+          <div class="setting-card setting-inline"><div><h4>24-hour clock</h4><p class="helper">Time follows your TV’s clock.</p></div><button id="clock-toggle" class="toggle" data-focus data-focus-key="clock-toggle" role="switch" aria-checked="false" aria-label="24-hour clock"><span></span></button></div>
+          <div class="setting-card"><h4>Weather location</h4><p id="location-current" class="helper">No location selected.</p><form id="location-form" class="search-form"><label class="sr-only" for="location-query">City or postal code</label><input id="location-query" data-focus data-focus-key="location-query" type="search" autocomplete="off" placeholder="City or postal code"><button id="location-search" class="secondary-button" data-focus data-focus-key="location-search" type="submit">Search</button></form><p id="location-status" class="helper" role="status"></p><div id="location-results" class="location-results"></div><button id="location-clear" class="text-button" data-focus data-focus-key="location-clear" hidden>Clear weather location</button></div>
+          <div class="setting-card setting-inline"><div><h4>Temperature</h4><p class="helper">Choose your preferred unit.</p></div><div class="segmented" aria-label="Temperature unit"><button id="unit-f" data-focus data-focus-key="unit-f" aria-pressed="true">°F</button><button id="unit-c" data-focus data-focus-key="unit-c" aria-pressed="false">°C</button></div></div>
+          <p class="fine-print">Weather data by <a href="https://open-meteo.com/" data-focus data-focus-key="weather-attribution" target="_blank" rel="noopener noreferrer">Open-Meteo</a>. Refreshes about every 15 minutes.</p>
+        </section>
+
+        <section id="section-pairing" class="settings-section" aria-label="Phone pairing" hidden>
+          <div class="section-intro"><h3>Your phone, connected.</h3><p>Pair once, then save the phone page to your home screen with “Remember this phone” enabled.</p></div>
+          <div class="setting-card"><h4>Upload from your phone</h4><p class="helper">Connect your phone to the same Wi-Fi as this TV, then scan the QR code with your phone’s camera.</p><button id="pair-generate" class="primary-button" data-focus data-focus-key="pair-generate">Show pairing QR code</button><div id="pair-details" class="pair-details" hidden><div id="pair-qr-wrap" class="pair-qr-wrap" hidden><canvas id="pair-qr" role="img" aria-label="Scan this QR code to connect your phone"></canvas><div><h4>Scan. Choose. Make it yours.</h4><p class="helper">Your phone opens the upload page and connects automatically. No address to type.</p></div></div><p id="pair-expiry" class="helper" role="status"></p><details id="pair-manual" class="pair-manual"><summary data-focus data-focus-key="pair-manual">Type the details instead</summary><a id="pair-url" data-focus data-focus-key="pair-url" target="_blank" rel="noopener noreferrer"></a><div class="pair-code-label">PAIRING CODE</div><div id="pair-code" class="pair-code"></div></details></div><p class="fine-print">JPG, PNG, WebP or MP4 · up to 150 MB<br>Videos loop without sound. MP4 playback depends on the TV’s supported codecs.</p></div>
+          <div class="setting-card"><div class="setting-card-heading"><h4>Remembered phones</h4><button id="devices-manage" class="text-button" data-focus data-focus-key="devices-manage">Manage</button></div><p class="helper">Review the phones that can reconnect without a pairing code.</p><div id="remembered-phones" class="remembered-phones"></div><p id="devices-status" class="helper" role="status"></p><div id="device-confirm" class="confirmation-box" role="dialog" aria-modal="true" aria-labelledby="device-confirm-message" hidden><p id="device-confirm-message"></p><div class="button-row"><button id="device-cancel" class="secondary-button" data-focus data-focus-key="device-cancel">Keep phone</button><button id="device-confirm-revoke" class="secondary-button" data-focus data-focus-key="device-confirm-revoke">Forget phone</button></div></div></div>
+        </section>
+        <section id="section-general" class="settings-section" aria-label="General settings" hidden>
+          <div class="section-intro"><h3>A home that feels yours.</h3><p>Home-button setup and a fresh start.</p></div>
+          <div class="setting-card"><div class="setting-inline"><div><h4>Launch at start</h4><p class="helper">Open Still Home shortly after the TV turns on or wakes from standby. Does not change your Home button.</p></div><button id="launch-at-start" class="toggle" data-focus data-focus-key="launch-at-start" role="switch" aria-checked="false" aria-label="Launch Still Home at start"><span></span></button></div><p class="fine-print">Requires the Still Home Homebrew startup hook. Reset turns this option off.</p></div><div class="setting-card"><h4>Default Home</h4><p class="helper">Open Still Home when you press Home. This does not change what opens when the TV turns on.</p><p id="default-home-status" class="helper" role="status">Checking setup…</p><button id="default-home-setup" class="secondary-button" data-focus data-focus-key="default-home-setup">Make default home screen · setup</button><button id="general-refresh" class="text-button" data-focus data-focus-key="general-refresh">Check again</button><p class="fine-print">Uses Magic Mapper. Restore your Home mapping there before uninstalling Still Home. Other remote bindings are left alone.</p></div>
+          <div class="setting-card danger-card"><h4>Reset Still Home</h4><p class="helper">Restore all Still Home settings and permanently delete all uploaded photos and videos on this TV. Remembered phones will need to pair again. This is not an LG factory reset.</p><button id="reset-open" class="secondary-button" data-focus data-focus-key="reset-open">Reset Still Home…</button><p id="reset-status" class="helper" role="status"></p></div>
+        </section>
+      </div>
+      <footer class="panel-footer"><span>STILL HOME 0.5.6</span><span>Back to close</span></footer>
+    </section>
+  </div>
+  <div id="focal-scrim" class="focal-scrim" hidden>
+    <section id="focal-panel" class="focal-panel" role="dialog" aria-modal="true" aria-labelledby="focal-title">
+      <header class="focal-header"><div><span class="eyebrow">CHOOSE WHAT MATTERS</span><h2 id="focal-title">Set focal point</h2><p id="focal-name" class="helper"></p></div><button id="focal-close" class="icon-button" data-focus data-focus-key="focal-close" aria-label="Cancel focal point editing">×</button></header>
+      <p class="helper focal-instructions">Point and click anywhere in the photograph. Arrows move the crosshair; OK moves to Save. The outlined frame shows what your TV will display.</p>
+      <div id="focal-stage" class="focal-stage" tabindex="0" data-focus data-focus-key="focal-stage" role="group" aria-label="Photograph focal point editor. Use arrows to move the point, OK to move to Save, or Back to cancel.">
+        <img id="focal-image" alt="Photograph being framed">
+        <div id="focal-crop-frame" class="focal-crop-frame" aria-hidden="true" hidden><span>TV FRAME</span></div>
+        <div id="focal-crosshair" class="focal-crosshair" aria-hidden="true" hidden></div>
+        <p id="focal-loading" class="focal-loading" role="status">Loading photograph…</p>
+      </div>
+      <div class="focal-preview-summary"><strong id="focal-preview-label">Original top framing</strong><span id="focal-readout"></span></div>
+      <p id="focal-explanation" class="helper">The focal point stays fixed while the photograph zooms.</p>
+      <div id="focal-notice" class="notice" role="status" hidden></div>
+      <div id="focal-conflict" class="conflict-box" hidden><p>Settings changed while you were editing. Your point is still here. Reload the saved point, or keep your point and save again.</p><div class="button-row"><button id="focal-reload" class="secondary-button" data-focus data-focus-key="focal-reload">Reload saved point</button><button id="focal-overwrite" class="secondary-button" data-focus data-focus-key="focal-overwrite">Keep my point</button></div></div>
+      <footer class="focal-actions"><button id="focal-original" class="text-button" data-focus data-focus-key="focal-original">Use original framing</button><span></span><button id="focal-cancel" class="secondary-button" data-focus data-focus-key="focal-cancel">Cancel</button><button id="focal-save" class="primary-button" data-focus data-focus-key="focal-save" disabled>Save focal point</button></footer>
+    </section>
+  </div>
+  <div id="reset-scrim" class="reset-scrim" hidden>
+    <section id="reset-dialog" class="confirmation-box" role="dialog" aria-modal="true" aria-labelledby="reset-title">
+      <h2 id="reset-title">Reset Still Home?</h2><p id="reset-summary" class="helper"></p>
+      <p class="helper">This permanently deletes uploaded wallpapers from this TV, resets preferences, and forgets phones. The included photo, original files on your phone or computer, and other apps are kept. Independently configured Magic Mapper bindings are not changed.</p>
+      <p id="reset-dialog-status" class="helper" role="status"></p>
+      <div class="button-row"><button id="reset-cancel" class="secondary-button" data-focus data-focus-key="reset-cancel">Cancel</button><button id="reset-confirm" class="danger-button" data-focus data-focus-key="reset-confirm">Reset and delete wallpapers</button></div>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="qr-code.js"></script>
+  <script src="focal-math.js"></script>
+  <script src="focus-navigation.js"></script>
+  <script src="media-actions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

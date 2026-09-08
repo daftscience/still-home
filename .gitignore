@@ -1,0 +1,16 @@
+node_modules/
+dist/
+backups/
+vm/
+state/
+*.log
+*.tgz
+*.ipk
+tests/*.png
+tests/*results*.json
+.DS_Store
+.env*
+!.env.example
+config.json
+devices.json
+media/
