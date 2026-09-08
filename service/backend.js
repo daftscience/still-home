@@ -13,9 +13,11 @@ const {createDeviceStore,deviceName,YEAR}=require('./remembered-devices');
 const APP_ID = 'com.tomperry.stillhome';
 const MAX_UPLOAD = 150 * 1024 * 1024;
 const randomToken = () => crypto.randomBytes(32).toString('hex');
-const VERSION = '0.5.6';
+const VERSION = '0.5.7';
 const SCALE_FIELDS = ['clockScale','dateScale','weatherScale'];
-const defaults = () => ({revision:0,appIds:null,clock24:false,temperatureUnit:'fahrenheit',location:null,dim:0.32,wallpaper:null,clockScale:1,dateScale:1,weatherScale:1,textShade:0,launchAtStart:false,kenBurns:false,kenBurnsSpeed:1,wallpaperLibrary:[],defaultFocalPoint:null,deletedWallpaperIds:[]});
+const DEFAULT_WALLPAPER=require('./default-wallpaper.json');
+const defaultWallpaper=()=>({id:DEFAULT_WALLPAPER.id,name:DEFAULT_WALLPAPER.name,width:DEFAULT_WALLPAPER.width,height:DEFAULT_WALLPAPER.height});
+const defaults = () => ({revision:0,appIds:null,clock24:false,temperatureUnit:'fahrenheit',location:null,dim:0.32,wallpaper:null,clockScale:1,dateScale:1,weatherScale:1,textShade:0,launchAtStart:false,kenBurns:false,kenBurnsSpeed:1,wallpaperLibrary:[],defaultWallpaper:defaultWallpaper(),defaultFocalPoint:Object.assign({},DEFAULT_WALLPAPER.focalPoint),deletedWallpaperIds:[]});
 class HttpError extends Error { constructor(status, message) { super(message); this.status=status; } }
 function fail(status,message) { throw new HttpError(status,message); }
 function equal(a,b) { if(typeof a!=='string'||typeof b!=='string') return false; const aa=Buffer.from(a),bb=Buffer.from(b);if(aa.length!==bb.length)return false;return crypto.timingSafeEqual(aa,bb); }
@@ -101,6 +103,9 @@ async function createBackend(options={}) {
     const saved=JSON.parse(await fsp.readFile(configPath,'utf8'));
     if(!saved||!Number.isSafeInteger(saved.revision)||saved.revision<0)throw Error('Invalid revision');
     const loaded=Object.assign(defaults(),saved);
+    // Framing belongs to an asset. Do not apply the old bundled photo's crop to a new one.
+    if(!saved.defaultWallpaper||saved.defaultWallpaper.id!==DEFAULT_WALLPAPER.id)loaded.defaultFocalPoint=Object.assign({},DEFAULT_WALLPAPER.focalPoint);
+    loaded.defaultWallpaper=defaultWallpaper();
     loaded.location=validateLocation(loaded.location);
     if(typeof loaded.clock24!=='boolean'||!['fahrenheit','celsius'].includes(loaded.temperatureUnit)||!Number.isFinite(loaded.dim)||loaded.dim<0||loaded.dim>0.75)throw Error('Invalid saved settings');
     if(SCALE_FIELDS.some(key=>!Number.isFinite(loaded[key])||loaded[key]<0.7||loaded[key]>1.5)||!Number.isFinite(loaded.textShade)||loaded.textShade<0||loaded.textShade>0.8)throw Error('Invalid saved text appearance');

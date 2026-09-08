@@ -25,7 +25,7 @@ async function upload(f,name,data=png){const r=await f.upload(data,name);assert.
 async function eventually(fn){for(let i=0;i<100;i++){if(await fn())return;await new Promise(r=>setTimeout(r,10));}assert.fail('Timed out waiting for upload state');}
 
 test('multiple photos and a video are retained across selecting, reset and restart',async t=>{
-  const f=await fixture(t);assert.deepEqual(f.config.wallpaperLibrary,[]);assert.equal(f.config.defaultFocalPoint,null);
+  const f=await fixture(t);assert.deepEqual(f.config.wallpaperLibrary,[]);assert.deepEqual(f.config.defaultFocalPoint,require('../service/default-wallpaper.json').focalPoint);
   const a=await upload(f,'first.png'),b=await upload(f,'second.png'),v=await upload(f,'video.mp4',mp4);
   assert.deepEqual(f.config.wallpaperLibrary.map(w=>w.id),[a.id,b.id,v.id]);assert.equal(f.config.wallpaper.id,v.id);
   assert.deepEqual((await fs.readdir(path.join(f.dir,'media'))).sort(),[a.id+'.png',b.id+'.png',v.id+'.mp4'].sort());
@@ -100,7 +100,7 @@ test('library GET and HEAD are read-only and video byte ranges retain exact byte
 test('legacy active wallpaper migrates in memory without rewriting saved configuration',async t=>{
   const f=await fixture(t),a=await upload(f,'a.png'),legacy=JSON.parse(JSON.stringify(f.config));delete legacy.wallpaperLibrary;delete legacy.defaultFocalPoint;delete legacy.wallpaper.focalPoint;
   await fs.writeFile(path.join(f.dir,'config.json'),JSON.stringify(legacy));const saved=await fs.readFile(path.join(f.dir,'config.json'));await f.restart();
-  assert.equal(f.config.wallpaperLibrary.length,1);assert.equal(f.config.wallpaperLibrary[0].id,a.id);assert.equal(f.config.wallpaper.focalPoint,null);assert.equal(f.config.defaultFocalPoint,null);
+  assert.equal(f.config.wallpaperLibrary.length,1);assert.equal(f.config.wallpaperLibrary[0].id,a.id);assert.equal(f.config.wallpaper.focalPoint,null);assert.deepEqual(f.config.defaultFocalPoint,require('../service/default-wallpaper.json').focalPoint);
   await f.request('GET','/api/state');await f.media(a.id);assert.deepEqual(await fs.readFile(path.join(f.dir,'config.json')),saved);
 });
 test('safe stored orphans are recovered while unsafe media and unrelated files are retained but unserved',async t=>{

@@ -2,9 +2,15 @@
 
 A minimalist homescreen and local-network phone companion for rooted LG webOS TVs. Includes a clock, date, configurable weather, a chosen app list, and photo or silent MP4 wallpapers.
 
-## Repository visibility
+## Install from Homebrew Channel
 
-This repository and its release files are private. The Homebrew feed is prepared at `repository/repo.json`, but **Homebrew Channel cannot download private GitHub files without authentication**. Do not put a GitHub token in the feed or a repository URL. To use the feed in Homebrew Channel, first host the feed, manifest, icon and IPK at unauthenticated URLs on a trusted local server, or explicitly publish those artifacts. Update the URLs in the manifest/feed to match that host. Merely creating a private GitHub release does not make an addable Homebrew repository.
+Add this custom repository URL in Homebrew Channel → Settings → Repositories:
+
+```text
+https://raw.githubusercontent.com/daftscience/still-home/main/repository/repo.json
+```
+
+The repository, manifest, icon and release package are public and require no GitHub account or token. This is an independent custom feed, not a listing in the official webOS Homebrew catalogue. **After installation, complete the rooted-TV service setup below before first use.**
 
 ## Features
 
@@ -18,13 +24,13 @@ This repository and its release files are private. The Homebrew feed is prepared
 - Separate Magic Mapper Home-button setup; LG Home is not removed or patched.
 - Confirmed reset clears Still Home settings, uploaded wallpapers and remembered phones.
 
-The bundled background is a code-generated neutral gradient, not a personal photograph. No private photos, TV backups, pairing credentials, local device state, screenshots or live-TV test records are included.
+The included wallpaper is **Cape Cod Sunset**, shared by the project owner for this release. Its saved focal point is bundled and used on fresh installs and when upgrading an older default background. Later focal edits (including original framing) remain saved. Image metadata is stripped without changing decoded pixels. No other personal photos, TV backups, pairing credentials, local device state, screenshots or live-TV test records are included.
 
 ## Requirements and installation
 
 Experimental software for a rooted LG webOS TV with Homebrew Channel. The app has been exercised on an LG B2 running webOS25 (internal webOS 10); other models and firmware are unverified. Startup was tested through the real boot-hook launch path and simulated power transitions; full physical off/on timing still needs verification.
 
-1. Install the release IPK using Homebrew Channel (when hosted accessibly) or the webOS developer tools.
+1. Install the release IPK using Homebrew Channel or the webOS developer tools.
 2. Copy `scripts/setup-tv.sh` to the TV and run it as root. It elevates **only** `com.tomperry.stillhome.service` through Homebrew Channel and installs a symlink to Still Home's boot script. It refuses to overwrite a different startup hook. Updating the IPK can require running setup again. Installing the IPK alone does not perform this root setup.
 3. Open Still Home from the TV's app list. In Settings → Pairing, display the QR code and scan it with your phone on the same trusted Wi-Fi.
 4. Optional: enable General → Launch at start. For the remote's Home button, configure Home → Launch app → Still Home in Magic Mapper. Other remote bindings remain managed there.
@@ -50,7 +56,7 @@ npm run build
 npm run feed
 ```
 
-The build produces `dist/com.tomperry.stillhome_0.5.6_all.ipk`. `npm run feed` generates a manifest with its SHA-256 checksum and a one-item Homebrew repository index. Keep the matching IPK and manifest together; rebuild the manifest whenever package bytes change.
+The build produces `dist/com.tomperry.stillhome_0.5.7_all.ipk`. `npm run feed` generates a manifest with its SHA-256 checksum and a one-item Homebrew repository index. Keep the matching IPK and manifest together; rebuild the manifest whenever package bytes change.
 
 `npm run preview` runs an isolated demo on port 1877 with data in `./state`. Open `http://127.0.0.1:1877/tv/index.html?preview=1`. Do not expose demo mode beyond a trusted development machine; its bootstrap is intentionally unauthenticated. Tests create temporary state and do not control a live TV or a virtual machine.
 

@@ -381,7 +381,7 @@
       $('dim-slider').value = Math.round(config.dim * 100);
       text('dim-value', Math.round(config.dim * 100) + '%');
     }
-    text('wallpaper-name', config.wallpaper ? config.wallpaper.name : 'Neutral · included wallpaper');
+    text('wallpaper-name', config.wallpaper ? config.wallpaper.name : (config.defaultWallpaper ? config.defaultWallpaper.name : 'Cape Cod Sunset') + ' · included wallpaper');
     text('wallpaper-type', config.wallpaper && config.wallpaper.kind === 'video' ? 'Video' : 'Photo');
     $('wallpaper-reset').disabled = !config.wallpaper || state.busy;
     updatePhotoMotion();
@@ -390,7 +390,7 @@
   }
   function wallpaperEntries() {
     if (!state.config) return [];
-    var entries = [{id: 'default', name: 'Neutral · included photo', kind: 'image', focalPoint: state.config.defaultFocalPoint || null}];
+    var entries = [{id: 'default', name: (state.config.defaultWallpaper ? state.config.defaultWallpaper.name : 'Cape Cod Sunset') + ' · included photo', kind: 'image', focalPoint: state.config.defaultFocalPoint || null}];
     var saved = state.config.wallpaperLibrary || [];
     saved.forEach(function (entry) { if (entry && entry.id && !entries.some(function (item) { return item.id === entry.id; })) entries.push(entry); });
     if (state.config.wallpaper && !entries.some(function (item) { return item.id === state.config.wallpaper.id; })) entries.push(state.config.wallpaper);

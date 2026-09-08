@@ -267,7 +267,7 @@ test('revocation rejects settings and focal writes whose request bodies were alr
     pending.request.write(serialized.slice(0,10));await new Promise(resolve=>setImmediate(resolve));
     assert.equal((await f.tv('POST','/api/devices/revoke',{id:paired.json.deviceId})).status,200);
     pending.request.end(serialized.slice(10));assert.equal((await pending.result).status,401,route);
-    assert.equal(f.config.revision,0);assert.equal(f.config.clock24,false);assert.equal(f.config.defaultFocalPoint,null);
+    assert.equal(f.config.revision,0);assert.equal(f.config.clock24,false);assert.deepEqual(f.config.defaultFocalPoint,require('../service/default-wallpaper.json').focalPoint);
   }
   await assert.rejects(fs.readFile(path.join(f.dir,'config.json')),e=>e.code==='ENOENT');
 });

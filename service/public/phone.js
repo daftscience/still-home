@@ -223,7 +223,7 @@
     state.config = config;
     var wallpaper = config.wallpaper;
     $('current-focal-button').hidden = Boolean(wallpaper && wallpaper.kind === 'video');
-    $('wallpaper-name').textContent = wallpaper ? wallpaper.name : 'Default landscape';
+    $('wallpaper-name').textContent = wallpaper ? wallpaper.name : (config.defaultWallpaper ? config.defaultWallpaper.name : 'Cape Cod Sunset');
     $('wallpaper-detail').textContent = wallpaper ? (wallpaper.kind === 'video' ? 'Looping video' : 'Photo') + (wallpaper.width && wallpaper.height ? ' · ' + wallpaper.width + ' × ' + wallpaper.height : '') + ' · ' + sizeLabel(wallpaper.size) : 'Still Home wallpaper';
     $('wallpaper-dim').value = String(Math.round(config.dim * 100));
     $('dim-value').textContent = Math.round(config.dim * 100) + '%';
@@ -278,7 +278,8 @@
 
   function libraryEntries() {
     if (!state.config) return [];
-    var entries = [{ id: 'default', name: 'Included wallpaper', kind: 'image', width: 1920, height: 902, focalPoint: state.config.defaultFocalPoint || null }];
+    var bundled = state.config.defaultWallpaper || {name:'Cape Cod Sunset',width:2400,height:1599};
+    var entries = [{ id: 'default', name: bundled.name + ' · included photo', kind: 'image', width: bundled.width, height: bundled.height, focalPoint: state.config.defaultFocalPoint || null }];
     var seen = { default: true };
     (state.config.wallpaperLibrary || []).forEach(function (entry) {
       if (!entry || !/^[a-f0-9]{32}$/.test(entry.id) || seen[entry.id]) return;
