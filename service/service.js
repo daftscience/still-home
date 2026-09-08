@@ -1,5 +1,6 @@
 'use strict';
 const {createBackend,VERSION}=require('./backend');
+const setupStatus=require('./setup-status');
 const DEMO=process.env.STILL_HOME_DEMO==='1';
 if(!DEMO&&process.argv.indexOf('--disable-timeouts')===-1)process.argv.push('--disable-timeouts');
 const service=DEMO?null:new (require('webos-service'))('com.tomperry.stillhome.service');
@@ -14,7 +15,10 @@ const platform=DEMO?{
   apps:async()=>{const r=await luna('luna://com.webos.applicationManager/listLaunchPoints',{});return(r.launchPoints||[]).map(a=>({id:a.id,title:a.title,icon:a.largeIcon||a.icon,hidden:a.hidden,params:a.params}));},
   launch:(id,params)=>luna('luna://com.webos.applicationManager/launch',{id,params})
 };
-const ready=createBackend({demo:DEMO,platform,stateDir:process.env.STILL_HOME_STATE,port:process.env.STILL_HOME_PORT?Number(process.env.STILL_HOME_PORT):1877,log:console.error});
+const ready=Promise.resolve().then(()=>{
+  if(!DEMO)setupStatus.assertReady();
+  return createBackend({demo:DEMO,platform,stateDir:process.env.STILL_HOME_STATE,port:process.env.STILL_HOME_PORT?Number(process.env.STILL_HOME_PORT):1877,log:console.error});
+});
 let startup=null, powerSubscription=null, retryPower=null;
 if(service){
   service.register('startup',m=>ready.then(async b=>{
@@ -23,15 +27,15 @@ if(service){
     try{const claim=await fs.open('/tmp/still-home-startup-claimed','wx',0o600);await claim.close();if(startup)startup.coldStart();}
     catch(e){if(e.code!=='EEXIST')throw e;}
     m.respond({returnValue:true});
-  }).catch(e=>m.respond({returnValue:false,errorText:e.message})));
+  }).catch(e=>m.respond(setupStatus.response(e))));
   service.register('bootstrap',m=>{
     const sender=String(m.sender||'');
     if(sender!=='com.tomperry.stillhome'&&!sender.startsWith('com.tomperry.stillhome-')){
       m.respond({returnValue:false,errorText:'Open Still Home on the TV to connect.'});return;
     }
-    ready.then(b=>m.respond(Object.assign({returnValue:true},b.bootstrap()))).catch(e=>m.respond({returnValue:false,errorText:e.message}));
+    ready.then(b=>m.respond(Object.assign({returnValue:true},b.bootstrap()))).catch(e=>m.respond(setupStatus.response(e)));
   });
-  service.register('status',m=>ready.then(b=>m.respond({returnValue:true,running:true,version:VERSION,revision:b.getConfig().revision,startup:startup?startup.status():null})).catch(e=>m.respond({returnValue:false,errorText:e.message})));
+  service.register('status',m=>ready.then(b=>m.respond({returnValue:true,running:true,version:VERSION,revision:b.getConfig().revision,startup:startup?startup.status():null})).catch(e=>m.respond(Object.assign({version:VERSION},setupStatus.response(e)))));
 }
 ready.then(b=>{
   if(service){
@@ -45,5 +49,5 @@ ready.then(b=>{
     }
     connectPower();
   }
-  console.log('Still Home ready on port',b.server.address().port);}).catch(e=>{console.error(e);process.exitCode=1;});
-for(const sig of ['SIGTERM','SIGINT'])process.on(sig,()=>{if(startup)startup.close();clearTimeout(retryPower);return ready.then(b=>b.close()).finally(()=>process.exit(0));});
+  console.log('Still Home ready on port',b.server.address().port);}).catch(e=>{console.error(e.message);if(e.code!==setupStatus.CODE)process.exitCode=1;});
+for(const sig of ['SIGTERM','SIGINT'])process.on(sig,()=>{if(startup)startup.close();clearTimeout(retryPower);return ready.then(b=>b.close()).catch(()=>{}).finally(()=>process.exit(0));});

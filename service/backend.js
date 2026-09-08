@@ -13,7 +13,7 @@ const {createDeviceStore,deviceName,YEAR}=require('./remembered-devices');
 const APP_ID = 'com.tomperry.stillhome';
 const MAX_UPLOAD = 150 * 1024 * 1024;
 const randomToken = () => crypto.randomBytes(32).toString('hex');
-const VERSION = '0.5.7';
+const VERSION = '0.5.8';
 const SCALE_FIELDS = ['clockScale','dateScale','weatherScale'];
 const DEFAULT_WALLPAPER=require('./default-wallpaper.json');
 const defaultWallpaper=()=>({id:DEFAULT_WALLPAPER.id,name:DEFAULT_WALLPAPER.name,width:DEFAULT_WALLPAPER.width,height:DEFAULT_WALLPAPER.height});

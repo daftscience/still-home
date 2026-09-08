@@ -1,14 +1,14 @@
 {
   "id": "com.tomperry.stillhome",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "type": "web",
   "title": "Still Home",
-  "appDescription": "Minimalist Home with clock, weather, apps and a local phone wallpaper companion. Root setup required; see README.",
-  "iconUri": "https://github.com/daftscience/still-home/releases/download/v0.5.7/icon.png",
+  "shortDescription": "Minimalist Home with clock, weather, apps and photo or MP4 wallpapers. Requires a rooted TV with Homebrew Channel. Install, launch Still Home, and choose Finish setup on the TV. No computer or SSH needed.",
+  "iconUri": "https://github.com/daftscience/still-home/releases/download/v0.5.8/icon.png",
   "sourceUrl": "https://github.com/daftscience/still-home",
   "rootRequired": true,
-  "ipkUrl": "https://github.com/daftscience/still-home/releases/download/v0.5.7/com.tomperry.stillhome_0.5.7_all.ipk",
+  "ipkUrl": "https://github.com/daftscience/still-home/releases/download/v0.5.8/com.tomperry.stillhome_0.5.8_all.ipk",
   "ipkHash": {
-    "sha256": "792ea485df145bd4f36fccdd4c198c691b414506294789fd65b37c5b7fa9f958"
+    "sha256": "ac66efb2d9e3279c3c3bcab096855cc1bf1d914834dcbbcb16d725fe58727e9f"
   }
 }

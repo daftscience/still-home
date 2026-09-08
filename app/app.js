@@ -12,7 +12,8 @@
     appearancePending: {}, appearanceTimer: null, appearanceSaving: false,
     pointerX: null, pointerY: null, focalEditor: null,
     devices: null, devicesBusy: false, deviceToRevoke: null,
-    tabMemory: {}, keyboardVisible: false, resetPreview: null, resetting: false, defaultHome: null
+    tabMemory: {}, keyboardVisible: false, resetPreview: null, resetting: false, defaultHome: null,
+    setupOpen: false, setupBusy: false
   };
   var nav = window.StillHomeNavigation;
   var tabNames = ['apps','wallpaper','display','pairing','general'];
@@ -26,7 +27,8 @@
   var appRowSignature = '';
   var availableSignature = '';
   var librarySignature = '';
-  var bootstrapBridge = null;
+  var setupClient = window.StillHomeTVSetup.create({Bridge:window.PalmServiceBridge});
+  var connectPromise = null, connectTimer = null;
   var reducedMotion = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var appearanceFields = {
     kenBurnsSpeed: { id: 'ken-burns-speed', min: 0.25, max: 3, fallback: 1 },
@@ -910,7 +912,7 @@
     state.dimTimer = setTimeout(persistDim, 600);
   }
   function pollState() {
-    if (!state.token || state.polling || state.busy || state.reauthenticating || document.hidden) return;
+    if (!state.token || state.polling || state.busy || state.reauthenticating || state.setupOpen || document.hidden) return;
     if (state.authInvalid) { recoverAuthentication(); return; }
     state.polling = true;
     request('/api/state').then(function (data) {
@@ -949,12 +951,14 @@
       if (!state.dirty) initAppDraft();
       if (state.settings) renderAppSettings();
       text('connection-state', '');
-    }).catch(function () {
+    }).catch(function (error) {
       state.authInvalid = true;
+      if(window.StillHomeTVSetup.required(error)){showSetup();return;}
       text('connection-state', 'TV connection interrupted · retrying');
     }).then(function () { state.reauthenticating = false; });
   }
   function focusScope() {
+    if (state.setupOpen) return $('setup-dialog');
     if (mediaActions && mediaActions.isOpen()) return mediaActions.scope();
     if (!$('reset-scrim').hidden) return $('reset-dialog');
     if (state.deviceToRevoke) return $('device-confirm');
@@ -1025,6 +1029,7 @@
     if (code === 13 && event.repeat) { event.preventDefault(); return; }
     if (code === 461 || key === 'Escape') {
       event.preventDefault(); event.stopPropagation();
+      if (state.setupOpen) { if(!state.setupBusy)exitSetup(); return; }
       if (mediaActions.isOpen()) {mediaActions.cancel();return;}
       if (!$('reset-scrim').hidden) { cancelReset(); return; }
       if (state.focalEditor) { closeFocalEditor(); return; }
@@ -1155,38 +1160,71 @@
   }
   function bootstrap() {
     if (new URLSearchParams(location.search).get('preview') === '1') return fetch('/demo/bootstrap').then(function (response) { if (!response.ok) throw new Error('Preview is unavailable.'); return response.json(); });
-    return new Promise(function (resolve, reject) {
-      if (typeof window.PalmServiceBridge !== 'function') { reject(new Error('Open Still Home on your TV to connect.')); return; }
-      var finished = false;
-      var timer = setTimeout(function () { if (!finished) { finished = true; reject(new Error('Still Home’s TV service did not respond.')); } }, 12000);
-      bootstrapBridge = new window.PalmServiceBridge();
-      bootstrapBridge.onservicecallback = function (response) {
-        if (finished) return;
-        finished = true; clearTimeout(timer);
-        try {
-          var data = JSON.parse(response);
-          if (!data.returnValue || !data.token || !data.baseUrl) throw new Error(data.errorText || 'Still Home’s TV service is unavailable.');
-          resolve(data);
-        } catch (error) { reject(error); }
-      };
-      bootstrapBridge.call('luna://com.tomperry.stillhome.service/bootstrap', '{}');
+    return setupClient.call('luna://com.tomperry.stillhome.service/bootstrap',{}).then(function(data){
+      if(!data.token||!data.baseUrl)throw new Error('Still Home’s TV service is unavailable.');
+      return data;
+    });
+  }
+  function showSetup() {
+    clearTimeout(connectTimer);
+    state.setupOpen=true;$('setup-scrim').hidden=false;
+    $('home').setAttribute('aria-hidden','true');
+    text('connection-state','Finish setup to load your apps.');
+    if(!state.setupBusy){text('setup-status','');text('setup-finish','Finish setup');$('setup-finish').focus();}
+  }
+  function exitSetup() {
+    if(state.setupBusy)return;
+    if(window.PalmSystem&&typeof window.PalmSystem.platformBack==='function')window.PalmSystem.platformBack();
+    else window.close();
+  }
+  function finishSetup() {
+    if(state.setupBusy)return;
+    state.setupBusy=true;$('setup-finish').disabled=true;$('setup-exit').disabled=true;
+    text('setup-status','Enabling Still Home’s service… Keep the TV on.');
+    // Check first: an earlier timed-out setup may already have completed.
+    return connect().then(function(connected){
+      if(connected)return true;
+      return setupClient.run().then(function(){
+        text('setup-status','Setup finished. Loading your apps…');
+        function reconnect(attempt){return connect().then(function(ready){if(ready||attempt>=3)return ready;return new Promise(function(resolve){setTimeout(resolve,1000);}).then(function(){return reconnect(attempt+1);});});}
+        return reconnect(0);
+      });
+    }).then(function(connected){
+      if(!connected)throw new Error('Setup finished, but the service is not ready. Close and reopen Still Home, or retry setup.');
+      toast('Still Home is ready.');
+    }).catch(function(error){
+      text('setup-status',errorMessage(error));text('setup-finish','Retry setup');
+    }).then(function(){
+      state.setupBusy=false;$('setup-finish').disabled=false;$('setup-exit').disabled=false;
+      if(state.setupOpen)$('setup-finish').focus();
     });
   }
   function connect() {
+    if(connectPromise)return connectPromise;
+    clearTimeout(connectTimer);
     text('connection-state', 'Connecting…');
-    return bootstrap().then(function (data) {
+    connectPromise = bootstrap().then(function (data) {
       state.baseUrl = data.baseUrl.replace(/\/$/, ''); state.token = data.token;
       return request('/api/state');
     }).then(function (data) {
       state.apps = data.apps; applyConfig(data.config); initAppDraft();
+      state.authInvalid=false;
       text('connection-state', '');
+      if(state.setupOpen){state.setupOpen=false;$('setup-scrim').hidden=true;if(!state.settings)$('home').removeAttribute('aria-hidden');($('app-row').querySelector('button')||$('settings-open')).focus();}
       if (document.activeElement === document.body) ($('app-row').querySelector('button') || $('settings-open')).focus();
+      return true;
     }).catch(function (error) {
+      if(window.StillHomeTVSetup.required(error)){showSetup();return false;}
       text('connection-state', errorMessage(error) + ' Retrying…');
-      setTimeout(function () { if (!state.config) connect(); }, 10000);
+      if(!state.setupOpen)connectTimer=setTimeout(function () { if (!state.config) connect(); }, 10000);
+      return false;
     });
+    connectPromise=connectPromise.then(function(result){connectPromise=null;return result;});
+    return connectPromise;
   }
 
+  $('setup-finish').addEventListener('click',finishSetup);
+  $('setup-exit').addEventListener('click',exitSetup);
   $('settings-open').addEventListener('click', function () { openSettings('apps'); });
   $('weather-open').addEventListener('click', function () { openSettings('display'); });
   $('choose-apps').addEventListener('click', function () { openSettings('apps'); });

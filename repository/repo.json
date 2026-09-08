@@ -9,7 +9,7 @@
     {
       "id": "com.tomperry.stillhome",
       "title": "Still Home",
-      "iconUri": "https://github.com/daftscience/still-home/releases/download/v0.5.7/icon.png",
+      "iconUri": "https://github.com/daftscience/still-home/releases/download/v0.5.8/icon.png",
       "manifestUrl": "https://github.com/daftscience/still-home/releases/latest/download/com.tomperry.stillhome.manifest.json"
     }
   ]

@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..'),info=require('../app/appinfo.json');
 const repo='https://github.com/daftscience/still-home';
 const name=info.id+'_'+info.version+'_all.ipk';
 const digest=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'dist',name))).digest('hex');
-const manifest={id:info.id,version:info.version,type:'web',title:info.title,appDescription:'Minimalist Home with clock, weather, apps and a local phone wallpaper companion. Root setup required; see README.',iconUri:repo+'/releases/download/v'+info.version+'/icon.png',sourceUrl:repo,rootRequired:true,ipkUrl:repo+'/releases/download/v'+info.version+'/'+name,ipkHash:{sha256:digest}};
+const manifest={id:info.id,version:info.version,type:'web',title:info.title,shortDescription:'Minimalist Home with clock, weather, apps and photo or MP4 wallpapers. Requires a rooted TV with Homebrew Channel. Install, launch Still Home, and choose Finish setup on the TV. No computer or SSH needed.',iconUri:repo+'/releases/download/v'+info.version+'/icon.png',sourceUrl:repo,rootRequired:true,ipkUrl:repo+'/releases/download/v'+info.version+'/'+name,ipkHash:{sha256:digest}};
 const feed={paging:{page:1,count:1,maxPage:1,itemsTotal:1},packages:[{id:info.id,title:info.title,iconUri:manifest.iconUri,manifestUrl:repo+'/releases/latest/download/'+info.id+'.manifest.json'}]};
 fs.mkdirSync(path.join(root,'repository'),{recursive:true});
 fs.writeFileSync(path.join(root,'repository',info.id+'.manifest.json'),JSON.stringify(manifest,null,2)+'\n');

@@ -92,7 +92,7 @@
           <div class="setting-card danger-card"><h4>Reset Still Home</h4><p class="helper">Restore all Still Home settings and permanently delete all uploaded photos and videos on this TV. Remembered phones will need to pair again. This is not an LG factory reset.</p><button id="reset-open" class="secondary-button" data-focus data-focus-key="reset-open">Reset Still Home…</button><p id="reset-status" class="helper" role="status"></p></div>
         </section>
       </div>
-      <footer class="panel-footer"><span>STILL HOME 0.5.7</span><span>Back to close</span></footer>
+      <footer class="panel-footer"><span>STILL HOME 0.5.8</span><span>Back to close</span></footer>
     </section>
   </div>
   <div id="focal-scrim" class="focal-scrim" hidden>
@@ -121,10 +121,22 @@
     </section>
   </div>
   <div id="toast" class="toast" role="status" hidden></div>
+  <div id="setup-scrim" class="setup-scrim" hidden>
+    <section id="setup-dialog" class="setup-dialog" role="dialog" aria-modal="true" aria-labelledby="setup-title" aria-describedby="setup-explanation">
+      <span class="eyebrow">WELCOME TO STILL HOME</span>
+      <h2 id="setup-title">One step to make yourself at home.</h2>
+      <p id="setup-explanation">Allow Homebrew Channel to give Still Home’s background service root access. This lets it save wallpapers, list and open apps, and support the optional startup setting.</p>
+      <p>Your photos, settings and remote bindings stay unchanged. This does not enable Launch at start or change your existing startup preference.</p>
+      <p class="helper">Requires a rooted TV with Homebrew Channel. No computer or SSH is needed. After an update or reinstall, you may be asked to finish setup again.</p>
+      <p id="setup-status" role="status" aria-live="polite"></p>
+      <div class="button-row"><button id="setup-finish" class="primary-button" data-focus data-focus-key="setup-finish">Finish setup</button><button id="setup-exit" class="secondary-button" data-focus data-focus-key="setup-exit">Exit</button></div>
+    </section>
+  </div>
   <script src="qr-code.js"></script>
   <script src="focal-math.js"></script>
   <script src="focus-navigation.js"></script>
   <script src="media-actions.js"></script>
+  <script src="tv-setup.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

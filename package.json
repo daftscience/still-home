@@ -1,6 +1,6 @@
 {
   "name": "still-home",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "private": true,
   "description": "Minimalist homescreen and local phone companion for rooted LG webOS TVs",
   "scripts": {
